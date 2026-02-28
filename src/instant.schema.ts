@@ -4,39 +4,53 @@ import { i } from "@instantdb/react";
 
 const _schema = i.schema({
   entities: {
-    $files: i.entity({
-      path: i.string().unique().indexed(),
-      url: i.string(),
-    }),
     $users: i.entity({
       email: i.string().unique().indexed().optional(),
       imageURL: i.string().optional(),
       type: i.string().optional(),
     }),
-    todos: i.entity({
-      text: i.string(),
-      done: i.boolean(),
-      createdAt: i.number(),
+    medications: i.entity({
+      name: i.string().indexed(),
+      dosage: i.string(),
+      memo: i.string().optional(),
+      timings: i.string(), // JSON array e.g. ["morning","noon"]
+      isActive: i.boolean().indexed(),
+      startDate: i.number().indexed(), // YYYYMMDD
+      createdAt: i.number().indexed(),
+    }),
+    intakeLogs: i.entity({
+      date: i.number().indexed(), // YYYYMMDD
+      timing: i.string().indexed(),
+      takenAt: i.number(),
+      createdAt: i.number().indexed(),
     }),
   },
   links: {
-    $usersLinkedPrimaryUser: {
+    userMedications: {
       forward: {
-        on: "$users",
+        on: "medications",
         has: "one",
-        label: "linkedPrimaryUser",
+        label: "user",
         onDelete: "cascade",
       },
       reverse: {
         on: "$users",
         has: "many",
-        label: "linkedGuestUsers",
+        label: "medications",
       },
     },
-  },
-  rooms: {
-    todos: {
-      presence: i.entity({}),
+    medicationIntakeLogs: {
+      forward: {
+        on: "intakeLogs",
+        has: "one",
+        label: "medication",
+        onDelete: "cascade",
+      },
+      reverse: {
+        on: "medications",
+        has: "many",
+        label: "intakeLogs",
+      },
     },
   },
 });
