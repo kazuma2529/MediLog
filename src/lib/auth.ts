@@ -1,6 +1,7 @@
 "use client";
 
 import { db } from "./db";
+import { clearRefreshToken } from "./session";
 
 export function useDevAuth() {
   return db.useAuth();
@@ -12,6 +13,7 @@ export function useAuthUserId(): string | null {
 }
 
 export function signOut(): Promise<void> {
+  clearRefreshToken();
   return db.auth.signOut();
 }
 
